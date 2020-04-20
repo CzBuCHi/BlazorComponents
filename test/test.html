@@ -1,0 +1,93 @@
+<html>
+    <head>
+        <style>
+            #container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 400vh;
+                background-color: #fff;
+                overflow: hidden;
+            }
+            #item {
+                width: 100px;
+                height: 100px;
+                background-color: rgb(245, 230, 99);
+                touch-action: none;
+                user-select: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="outerContainer">
+            <div id="container" 
+            ontouchstart="dragStart(event)"
+            ontouchend="dragEnd(event)"
+            ontouchmove="drag(event)"
+
+            onmousedown="dragStart(event)"
+            onmouseup="dragEnd(event)"
+            onmousemove="drag(event)"
+            >
+                <div id="item"></div>
+            </div>
+        </div>
+        <script>
+            var dragItem = document.querySelector("#item");
+            var container = document.querySelector("#container");
+
+            var active = false;
+            var currentX;
+            var currentY;
+            var initialX;
+            var initialY;
+            var xOffset = 0;
+            var yOffset = 0;
+
+            function dragStart(e) {
+                if (e.type === "touchstart") {
+                    initialX = e.touches[0].clientX - xOffset;
+                    initialY = e.touches[0].clientY - yOffset;
+                } else {
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                }
+
+                if (e.target === dragItem) {
+                    active = true;
+                }
+            }
+
+            function dragEnd(e) {
+                initialX = currentX;
+                initialY = currentY;
+
+                active = false;
+            }
+
+            function drag(e) {
+                if (active) {
+                    e.preventDefault();
+
+                    if (e.type === "touchmove") {
+                        currentX = e.touches[0].clientX - initialX;
+                        currentY = e.touches[0].clientY - initialY;
+                    } else {
+                        currentX = e.clientX - initialX;
+                        currentY = e.clientY - initialY;
+                    }
+
+                    xOffset = currentX;
+                    yOffset = currentY;
+
+                    setTranslate(currentX, currentY, dragItem);
+                }
+            }
+
+            function setTranslate(xPos, yPos, el) {
+                el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+            }
+        </script>
+    </body>
+</html>

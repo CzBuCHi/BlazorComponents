@@ -1,24 +1,26 @@
-﻿<Styled @bind-Classname="@_Wrapper">
+﻿@inject DialogsService DialogsService;
+
+<Styled @bind-Classname="@_CssWrapper">
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
 </Styled>
-<Styled @bind-Classname="@_ContainerActive">
+<Styled @bind-Classname="@_CssContainerActive">
     &::before {
     opacity: 0.5;
     outline: 1px solid #0088CC;
     }
 </Styled>
-<Styled @bind-Classname="@_ContainerInactive">
+<Styled @bind-Classname="@_CssContainerInactive">
     &::before {
     outline: 1px solid #d8d8d8;
     }
 </Styled>
-<Styled @bind-Classname="@_Container"
-        ComposeActive="@_ContainerActive" ComposeActiveIf="@Active"
-        ComposeInactive="@_ContainerInactive" ComposeInactiveIf="@(!Active)">
+<Styled @bind-Classname="@_CssContainer"
+         ComposeActive="@_CssContainerActive" ComposeActiveIf="@_Context.Active"
+         ComposeInactive="@_CssContainerInactive" ComposeInactiveIf="@(!_Context.Active)">
     animation: reveal 150ms;
     border: 5px solid transparent;
     position: absolute;
@@ -35,14 +37,14 @@
     z-index: -1;
     }
 </Styled>
-<Styled @bind-Classname="@_CloseButtonActive">
+<Styled @bind-Classname="@_CssCloseButtonActive">
     color: #666;
     cursor: pointer;
     &:hover {
     color: #ff7777;
     }
 </Styled>
-<Styled @bind-Classname="@_CloseButtonInactive">
+<Styled @bind-Classname="@_CssCloseButtonInactive">
     color: #AAA;
     cursor: default;
     &:hover {
@@ -50,9 +52,9 @@
     cursor: default;
     }
 </Styled>
-<Styled @bind-Classname="@_CloseButton"
-        ComposeActive="@_CloseButtonActive" ComposeActiveIf="@(!CloseButtonInactive)"
-        ComposeInactive="@_CloseButtonInactive" ComposeInactiveIf="@CloseButtonInactive">
+<Styled @bind-Classname="@_CssCloseButton"
+         ComposeActive="@_CssCloseButtonActive" ComposeActiveIf="@(!_Context.CloseButtonInactive)"
+         ComposeInactive="@_CssCloseButtonInactive" ComposeInactiveIf="@_Context.CloseButtonInactive">
     float: right;
     height: 26px;
     position: relative;
@@ -72,7 +74,7 @@
     content: '\d7';
     }
 </Styled>
-<Styled @bind-Classname="@_Header">
+<Styled @bind-Classname="@_CssHeader">
     -khtml-user-select: none;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
@@ -88,15 +90,15 @@
     width: 100%;
     z-index: 1001;
 </Styled>
-<Styled @bind-Classname="@_HeaderTitleNoIcon">
+<Styled @bind-Classname="@_CssHeaderTitleNoIcon">
     padding-left: 7px;
 </Styled>
-<Styled @bind-Classname="@_HeaderTitleWithIcon">
+<Styled @bind-Classname="@_CssHeaderTitleWithIcon">
     padding-left: 35px;
 </Styled>
-<Styled @bind-Classname="@_HeaderTitle"
-        ComposeNoIcon="@_HeaderTitleNoIcon" ComposeNoIconIf="@(string.IsNullOrEmpty(Icon))"
-        ComposeWithIcon="@_HeaderTitleWithIcon" ComposeWithIconIf="@(!string.IsNullOrEmpty(Icon))">
+<Styled @bind-Classname="@_CssHeaderTitle"
+         ComposeNoIcon="@_CssHeaderTitleNoIcon" ComposeNoIconIf="@(string.IsNullOrEmpty(_Context.Icon))"
+         ComposeWithIcon="@_CssHeaderTitleWithIcon" ComposeWithIconIf="@(!string.IsNullOrEmpty(_Context.Icon))">
     -khtml-user-select: none;
     -moz-user-select: -moz-none;
     -webkit-user-select: none;
@@ -111,13 +113,12 @@
     user-select: none;
     white-space: nowrap;
 
-
     & > span {
     font-weight: bold;
     padding-right: 15px;
     }
 </Styled>
-<Styled @bind-Classname="@_Icon">
+<Styled @bind-Classname="@_CssIcon">
     color: #333;
     font-family: 'ico16';
     font-size: 16px;
@@ -127,9 +128,9 @@
     position: absolute;
     top: 8px;
     width: 18px;
-    background: url('@Icon') 0 0 no-repeat;
+    background: url('@_Context.Icon') 0 0 no-repeat;
 </Styled>
-<Styled @bind-Classname="@_Content">
+<Styled @bind-Classname="@_CssContent">
     box-shadow: 0 0 10px #000;
     box-shadow: 0 0 16px rgba(0, 0, 0, 0.25);
     cursor: default;
@@ -140,7 +141,7 @@
     padding: 40px 10px;
     z-index: 1001;
 </Styled>
-<Styled @bind-Classname="@_Footer">
+<Styled @bind-Classname="@_CssFooter">
     width: 100%;
     padding: 6px 10px;
     background: #f7f7f7;
@@ -153,10 +154,10 @@
     justify-content: center;
     z-index: 1001;
 </Styled>
-<Styled @bind-Classname="@_FooterButton">
+<Styled @bind-Classname="@_CssFooterButton">
     margin: 0 5px;
 </Styled>
-<Styled @bind-Classname="@_Overlay">
+<Styled @bind-Classname="@_CssOverlay">
     position: absolute;
     top: 0;
     left: 0;
@@ -165,84 +166,132 @@
     z-index: 1000;
 </Styled>
 
-<div class="@_Wrapper" style="z-index: @ZIndex">
-    @if (Modal) {
-        <div class="@_Overlay"></div>
+<div class="@_CssWrapper" style="z-index: @_Context.ZIndex" @onmousedown="OnDragStart" @onmouseup="OnDragEnd" @onmousemove="OnDrag" @onmousemove:preventDefault>
+    @if (_Context.Modal) {
+        <div class="@_CssOverlay"></div>
     }
-    <div class="@_Container" style="@_Position">
-        <div class="@_Header">
-            <div class="@_CloseButton" @onclick="@CancelClickHandler"></div>
-            @if (!string.IsNullOrEmpty(Icon)) {
-                <div class="@_Icon"></div>
+    <div class="@_CssContainer" style="@Position">
+        <div class="@_CssHeader" @onmouseenter="OnMouseEnter" @onmouseleave="OnMouseLeave">
+            <div class="@_CssCloseButton" @onclick="@CancelClickHandler"></div>
+            @if (!string.IsNullOrEmpty(_Context.Icon)) {
+                <div class="@_CssIcon"></div>
             }
-            <div class="@_HeaderTitle">
-                <span>@Header</span>
+            <div class="@_CssHeaderTitle">
+                <span>@_Context.Header</span>
             </div>
         </div>
 
-        <div class="@_Content">
-            @ChildContent
+        <div class="@_CssContent">
+            @_Context.ChildContent
+            <Properties Values="@(new { _Draggable, _Active, _Context.Left, _Context.Top, _InitialX, _InitialY, _XOffset, _YOffset })" />
         </div>
 
-        <div class="@_Footer">
-            @foreach ((string title, string result) in Actions) {
-                <input class="@_FooterButton" type="button" value="@title" @onclick="@(() => ActionHandler(result))" />
+        <div class="@_CssFooter">
+            @foreach ((string title, string result) in _Context.Actions) {
+                <input class="@_CssFooterButton" type="button" value="@title" @onclick="@(() => ActionHandler(result))" />
             }
         </div>
     </div>
 </div>
 
-
 @code {
-    [Parameter] public string Identifier { get; set; }
-    [Parameter] public int ZIndex { get; set; }
-    [Parameter] public int Top { get; set; }
-    [Parameter] public int Left { get; set; }
-    [Parameter] public int Width { get; set; }
-    [Parameter] public int Height { get; set; }
-    [Parameter] public string Header { get; set; }
-    [Parameter] public RenderFragment ChildContent { get; set; }
-    [Parameter] public (string title, string result)[] Actions { get; set; }
-    [Parameter] public string CancelResult { get; set; }
-    [Parameter] public bool Active { get; set; }
-    [Parameter] public bool Modal { get; set; }
-    [Parameter] public bool Percents { get; set; }
-    [Parameter] public bool CloseButtonInactive { get; set; }
-    [Parameter] public string Icon { get; set; }
-    [Parameter] public EventCallback<(string identifier, string result)> OnActionExecuted { get; set; }
-
+    [Parameter]
+    public string Identifier { get; set; }
+    
     private void CancelClickHandler() {
-        if (Active && !CloseButtonInactive) {
-            OnActionExecuted.InvokeAsync((Identifier, CancelResult));
+        if (_Context.Active && !_Context.CloseButtonInactive) {
+            _Context.OnActionExecuted(Identifier, _Context.CancelResult);
         }
     }
 
     private void ActionHandler(string result) {
-        OnActionExecuted.InvokeAsync((Identifier, result));
+        _Context.OnActionExecuted(Identifier, result);
     }
+
+    private DialogContext _Context;
 
     protected override void OnParametersSet() {
         base.OnParametersSet();
-        string units = Percents ? "%" : "px";
-        _Position = $"top: {Top}{units}; left: {Left}{units}; width: {Width}{units}; height: {Height}{units}";
+        _Context = DialogsService.FindDialogContext(Identifier);
+        _XOffset = _Context.Left;
+        _YOffset = _Context.Top;
     }
 
-    private string _Position;
-    private string _Container;
-    private string _ContainerActive;
-    private string _ContainerInactive;
-    private string _ContainerMaximized;
-    private string _CloseButton;
-    private string _CloseButtonActive;
-    private string _CloseButtonInactive;
-    private string _Header;
-    private string _HeaderTitleNoIcon;
-    private string _HeaderTitleWithIcon;
-    private string _HeaderTitle;
-    private string _Icon;
-    private string _Content;
-    private string _Footer;
-    private string _FooterButton;
-    private string _Overlay;
-    private string _Wrapper;
+    #region Styles
+
+    private string _CssContainer;
+    private string _CssContainerActive;
+    private string _CssContainerInactive;
+    private string _CssContainerMaximized;
+    private string _CssCloseButton;
+    private string _CssCloseButtonActive;
+    private string _CssCloseButtonInactive;
+    private string _CssHeader;
+    private string _CssHeaderTitleNoIcon;
+    private string _CssHeaderTitleWithIcon;
+    private string _CssHeaderTitle;
+    private string _CssIcon;
+    private string _CssContent;
+    private string _CssFooter;
+    private string _CssFooterButton;
+    private string _CssOverlay;
+    private string _CssWrapper;
+
+    #endregion
+
+    #region Draggable
+
+    private string Position {
+        get {
+            string units = _Context.Percents ? "%" : "px";
+            return $"top: {_Context.Top}{units}; left: {_Context.Left}{units}; width: {_Context.Width}{units}; height: {_Context.Height}{units}";
+        }
+    }
+
+    private bool _Draggable;
+    private bool _Active;
+    private double _InitialX;
+    private double _InitialY;
+    private double _XOffset;
+    private double _YOffset;
+
+    private void OnMouseEnter() {
+        if (!_Context.Percents) {
+            _Draggable = true;
+        }
+    }
+
+    private void OnMouseLeave() {
+        _Draggable = false;
+    }
+
+    private void OnDragStart(MouseEventArgs e) {
+        if (!_Draggable) {
+            return;
+        }
+
+        _InitialX = e.ClientX - _XOffset;
+        _InitialY = e.ClientY - _YOffset;
+        _Active = true;
+    }
+
+    private void OnDragEnd() {
+        if (_Active) {
+            _InitialX = _Context.Left;
+            _InitialY = _Context.Top;
+            _Active = false;
+        }
+    }
+
+    private void OnDrag(MouseEventArgs e) {
+        if (_Active) {
+            _Context.Left = e.ClientX - _InitialX;
+            _Context.Top = e.ClientY - _InitialY;
+            _XOffset = _Context.Left;
+            _YOffset = _Context.Top;
+        }
+    }
+
+    #endregion
+
 }

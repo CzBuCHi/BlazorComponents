@@ -9,11 +9,13 @@ Welcome to your new app.
 
 @code {
 
-    private void ShowDialog() {
+    private void ShowDialog()
+    {
         DialogsService.ShowDialog<DialogContent>(
-            new DialogInfo{
+            new DialogInfo
+            {
                 Identifier = "dialog1",
-                Actions = new (string title, string result)[]{ ("Ok", "Ok"), ("Storno", "Cancel") },
+                Actions = new (string title, string result)[] { ("Ok", "Ok"), ("Storno", "Cancel") },
                 Width = 400,
                 Height = 300,
                 Top = 100,

@@ -1,11 +1,10 @@
 ﻿@inject DialogsService DialogsService
 
-<div>
-    Dialog content
+    <div>
+        Dialog content
 
-    <button @onclick="@ShowModalDialog">Show modal dialog</button>
-
-</div>
+        <button @onclick="@ShowModalDialog">Show modal dialog</button>
+    </div>
 
 @code {
     private void ShowModalDialog() {
@@ -21,6 +20,7 @@
                 Header = "HEADER 2",
                 Icon = "./form.png",
                 Modal = true,
+                CloseButtonInactive = true
             });
     }
 }

@@ -1,0 +1,54 @@
+﻿@using System.Reflection
+@using System.Runtime.CompilerServices
+@inject DialogsService DialogsService
+
+<div>
+    <table>
+        <thead>
+        <tr>
+            <td>Name</td>
+            <td>Value</td>
+        </tr>
+        </thead>
+        <tbody>
+            @if (_Dict != null) {
+                foreach (KeyValuePair<string, object?> pair in _Dict) {
+                    <tr>
+                        <td>@pair.Key</td>
+                        <td>@pair.Value.ToString()</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter] public object Values { get; set; }
+
+    protected override void OnParametersSet() {
+        base.OnParametersSet();
+
+        if (Values == null) {
+            return;
+        }
+
+        Type type = Values.GetType();
+        if (!CheckIfAnonymousType(type)) {
+            return;
+        }
+
+        _Dict = type.GetProperties().ToDictionary(o => o.Name, o => o.GetValue(Values, null));
+    }
+
+    private static bool CheckIfAnonymousType(Type type)
+    {
+        // HACK: The only way to detect anonymous types right now.
+        return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
+               && type.IsGenericType && type.Name.Contains("AnonymousType")
+               && (type.Name.StartsWith("<>") || type.Name.StartsWith("VB$"))
+               && type.Attributes.HasFlag(TypeAttributes.NotPublic);
+    }
+
+    private Dictionary<string, object?> _Dict;
+}
