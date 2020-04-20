@@ -1,0 +1,27 @@
+﻿@page "/"
+@inject DialogsService DialogsService
+
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+
+<button @onclick="@ShowDialog">Show dialog</button>
+
+@code {
+
+    private void ShowDialog() {
+        DialogsService.ShowDialog<DialogContent>(
+            new DialogInfo{
+                Identifier = "dialog1",
+                Actions = new (string title, string result)[]{ ("Ok", "Ok"), ("Storno", "Cancel") },
+                Width = 400,
+                Height = 300,
+                Top = 100,
+                Left = 100,
+                Header = "HEADER",
+                Icon = "./form.png",
+            });
+    }
+
+
+}

@@ -1,0 +1,43 @@
+@inherits DialogHostBase
+@inject IStyled Styled
+@using BlazorComponents.Pages
+
+<Styled @bind-Classname="@_DialogHostHidden">
+    display: none;
+</Styled>
+<Styled @bind-Classname="@_DialogHost"
+        ComposeHidden="@_DialogHostHidden" ComposeHiddenIf="@(DialogsService.Dialogs.Count == 0)">
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 5000;
+</Styled>
+
+<div class="@_DialogHost">
+    @foreach (DialogContext context in DialogsService.Dialogs) {
+        <DialogComponent Identifier="@context.Identifier"
+                         Header="@context.Header"
+                         Active="@context.Active"
+                         Actions="@context.Actions"
+                         Top="@context.Top"
+                         Left="@context.Left"
+                         Width="@context.Width"
+                         Height="@context.Height"
+                         ZIndex="@context.ZIndex"
+                         OnActionExecuted="@context.OnActionExecuted"
+                         CloseButtonInactive="@context.CloseButtonInactive"
+                         Icon="@context.Icon"
+                         Percents="@context.Percents"
+                         CancelResult="@context.CancelResult"
+                         Modal="@context.Modal">
+            @context.ChildContent
+        </DialogComponent>
+    }
+</div>
+
+@code {
+    private string _DialogHostHidden;
+    private string _DialogHost;
+}

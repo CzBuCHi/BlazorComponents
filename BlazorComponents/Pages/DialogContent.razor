@@ -1,0 +1,26 @@
+﻿@inject DialogsService DialogsService
+
+<div>
+    Dialog content
+
+    <button @onclick="@ShowModalDialog">Show modal dialog</button>
+
+</div>
+
+@code {
+    private void ShowModalDialog() {
+        DialogsService.ShowDialog<DialogContent2>(
+            new DialogInfo {
+                Identifier = "dialog2",
+                Actions = new (string title, string result)[] { ("Ok", "Ok"), ("Storno", "Cancel") },
+                Width = 90,
+                Height = 90,
+                Top = 5,
+                Left = 5,
+                Percents = true,
+                Header = "HEADER 2",
+                Icon = "./form.png",
+                Modal = true,
+            });
+    }
+}

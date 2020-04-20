@@ -1,0 +1,248 @@
+﻿<Styled @bind-Classname="@_Wrapper">
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+</Styled>
+<Styled @bind-Classname="@_ContainerActive">
+    &::before {
+    opacity: 0.5;
+    outline: 1px solid #0088CC;
+    }
+</Styled>
+<Styled @bind-Classname="@_ContainerInactive">
+    &::before {
+    outline: 1px solid #d8d8d8;
+    }
+</Styled>
+<Styled @bind-Classname="@_Container"
+        ComposeActive="@_ContainerActive" ComposeActiveIf="@Active"
+        ComposeInactive="@_ContainerInactive" ComposeInactiveIf="@(!Active)">
+    animation: reveal 150ms;
+    border: 5px solid transparent;
+    position: absolute;
+    z-index: 1001;
+
+    &::before {
+    bottom: 0;
+    content: '';
+    display: block;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: -1;
+    }
+</Styled>
+<Styled @bind-Classname="@_CloseButtonActive">
+    color: #666;
+    cursor: pointer;
+    &:hover {
+    color: #ff7777;
+    }
+</Styled>
+<Styled @bind-Classname="@_CloseButtonInactive">
+    color: #AAA;
+    cursor: default;
+    &:hover {
+    color: #AAA;
+    cursor: default;
+    }
+</Styled>
+<Styled @bind-Classname="@_CloseButton"
+        ComposeActive="@_CloseButtonActive" ComposeActiveIf="@(!CloseButtonInactive)"
+        ComposeInactive="@_CloseButtonInactive" ComposeInactiveIf="@CloseButtonInactive">
+    float: right;
+    height: 26px;
+    position: relative;
+    width: 26px;
+    z-index: 10;
+
+    &::after {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    content: '';
+    font-family: 'ico16';
+    font-size: 28px;
+    left: 4px;
+    line-height: 16px;
+    position: absolute;
+    top: 8px;
+    content: '\d7';
+    }
+</Styled>
+<Styled @bind-Classname="@_Header">
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    -webkit-user-select: none;
+    background-color: #e5e5e5;
+    cursor: default;
+    height: 36px;
+    left: 0;
+    overflow: hidden;
+    padding-right: 2px;
+    position: absolute;
+    top: 0;
+    user-select: none;
+    width: 100%;
+    z-index: 1001;
+</Styled>
+<Styled @bind-Classname="@_HeaderTitleNoIcon">
+    padding-left: 7px;
+</Styled>
+<Styled @bind-Classname="@_HeaderTitleWithIcon">
+    padding-left: 35px;
+</Styled>
+<Styled @bind-Classname="@_HeaderTitle"
+        ComposeNoIcon="@_HeaderTitleNoIcon" ComposeNoIconIf="@(string.IsNullOrEmpty(Icon))"
+        ComposeWithIcon="@_HeaderTitleWithIcon" ComposeWithIconIf="@(!string.IsNullOrEmpty(Icon))">
+    -khtml-user-select: none;
+    -moz-user-select: -moz-none;
+    -webkit-user-select: none;
+    color: #333;
+    cursor: default;
+    font-style: normal;
+    font-weight: inherit;
+    line-height: 36px;
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    user-select: none;
+    white-space: nowrap;
+
+
+    & > span {
+    font-weight: bold;
+    padding-right: 15px;
+    }
+</Styled>
+<Styled @bind-Classname="@_Icon">
+    color: #333;
+    font-family: 'ico16';
+    font-size: 16px;
+    height: 18px;
+    left: 10px;
+    line-height: 18px;
+    position: absolute;
+    top: 8px;
+    width: 18px;
+    background: url('@Icon') 0 0 no-repeat;
+</Styled>
+<Styled @bind-Classname="@_Content">
+    box-shadow: 0 0 10px #000;
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.25);
+    cursor: default;
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+    background-color: #fff;
+    padding: 40px 10px;
+    z-index: 1001;
+</Styled>
+<Styled @bind-Classname="@_Footer">
+    width: 100%;
+    padding: 6px 10px;
+    background: #f7f7f7;
+    border-top: 1px solid #E3E3E3;
+    bottom: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    z-index: 1001;
+</Styled>
+<Styled @bind-Classname="@_FooterButton">
+    margin: 0 5px;
+</Styled>
+<Styled @bind-Classname="@_Overlay">
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+</Styled>
+
+<div class="@_Wrapper" style="z-index: @ZIndex">
+    @if (Modal) {
+        <div class="@_Overlay"></div>
+    }
+    <div class="@_Container" style="@_Position">
+        <div class="@_Header">
+            <div class="@_CloseButton" @onclick="@CancelClickHandler"></div>
+            @if (!string.IsNullOrEmpty(Icon)) {
+                <div class="@_Icon"></div>
+            }
+            <div class="@_HeaderTitle">
+                <span>@Header</span>
+            </div>
+        </div>
+
+        <div class="@_Content">
+            @ChildContent
+        </div>
+
+        <div class="@_Footer">
+            @foreach ((string title, string result) in Actions) {
+                <input class="@_FooterButton" type="button" value="@title" @onclick="@(() => ActionHandler(result))" />
+            }
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [Parameter] public string Identifier { get; set; }
+    [Parameter] public int ZIndex { get; set; }
+    [Parameter] public int Top { get; set; }
+    [Parameter] public int Left { get; set; }
+    [Parameter] public int Width { get; set; }
+    [Parameter] public int Height { get; set; }
+    [Parameter] public string Header { get; set; }
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public (string title, string result)[] Actions { get; set; }
+    [Parameter] public string CancelResult { get; set; }
+    [Parameter] public bool Active { get; set; }
+    [Parameter] public bool Modal { get; set; }
+    [Parameter] public bool Percents { get; set; }
+    [Parameter] public bool CloseButtonInactive { get; set; }
+    [Parameter] public string Icon { get; set; }
+    [Parameter] public EventCallback<(string identifier, string result)> OnActionExecuted { get; set; }
+
+    private void CancelClickHandler() {
+        if (Active && !CloseButtonInactive) {
+            OnActionExecuted.InvokeAsync((Identifier, CancelResult));
+        }
+    }
+
+    private void ActionHandler(string result) {
+        OnActionExecuted.InvokeAsync((Identifier, result));
+    }
+
+    protected override void OnParametersSet() {
+        base.OnParametersSet();
+        string units = Percents ? "%" : "px";
+        _Position = $"top: {Top}{units}; left: {Left}{units}; width: {Width}{units}; height: {Height}{units}";
+    }
+
+    private string _Position;
+    private string _Container;
+    private string _ContainerActive;
+    private string _ContainerInactive;
+    private string _ContainerMaximized;
+    private string _CloseButton;
+    private string _CloseButtonActive;
+    private string _CloseButtonInactive;
+    private string _Header;
+    private string _HeaderTitleNoIcon;
+    private string _HeaderTitleWithIcon;
+    private string _HeaderTitle;
+    private string _Icon;
+    private string _Content;
+    private string _Footer;
+    private string _FooterButton;
+    private string _Overlay;
+    private string _Wrapper;
+}
